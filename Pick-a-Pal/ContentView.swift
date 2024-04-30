@@ -8,20 +8,34 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var names: [String] = ["Tony", "Raimy", "Lewis", "Tali", "Mabel"]
+    @State private var names: [String] = []
     @State private var nameToAdd = ""
     @State private var pickedName = ""
     @State private var shouldRemovePickedName = false
     
     var body: some View {
         VStack {
+            VStack(spacing: 8) {
+                Image(systemName: "person.2.crop.square.stack.fill")
+                    .foregroundStyle(.tint)
+                    .symbolRenderingMode(.hierarchical)
+                
+                Text("Pick-a-Pal")
+            }
+            .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
+            .bold()
+            
             Text(pickedName.isEmpty ? " " : pickedName)
+                .font(.title2)
+                .bold()
+                .foregroundStyle(.tint)
             
             List {
                 ForEach(names, id: \.self) { name in
                     Text(name)
                 }
             }
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             
             TextField("Add Name", text: $nameToAdd)
                 .autocorrectionDisabled()
