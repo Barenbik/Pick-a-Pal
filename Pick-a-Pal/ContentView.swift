@@ -6,9 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ContentView: View {
-    @State private var names: [String] = []
+    @Query private var pals: [Pal] = []
+    
+    @Environment(\.modelContext) private var context
+    
     @State private var nameToAdd = ""
     @State private var pickedName = ""
     @State private var shouldRemovePickedName = false
@@ -31,8 +35,8 @@ struct ContentView: View {
                 .foregroundStyle(.tint)
             
             List {
-                ForEach(names, id: \.self) { name in
-                    Text(name)
+                ForEach(pals) { pal in
+                    Text(pal.name)
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 8))
@@ -41,7 +45,7 @@ struct ContentView: View {
                 .autocorrectionDisabled()
                 .onSubmit {
                     if !nameToAdd.isEmpty {
-                        names.append(nameToAdd)
+                        context.insert(Pal(name: nameToAdd))
                         nameToAdd = ""
                     }
                 }
@@ -49,13 +53,11 @@ struct ContentView: View {
             Toggle("Remove picked names", isOn: $shouldRemovePickedName)
             
             Button() {
-                if let randomName = names.randomElement() {
-                    pickedName = randomName
+                if let randomPal = pals.randomElement() {
+                    pickedName = randomPal.name
                     
                     if shouldRemovePickedName {
-                        names.removeAll { name in
-                            return (name == randomName)
-                        }
+                        context.delete(randomPal)
                     }
                 } else {
                     pickedName = ""
